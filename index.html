@@ -102,6 +102,7 @@
       });
       const [sortBy, setSortBy] = useState('score');
       const [searchQuery, setSearchQuery] = useState('');
+      const [revenueFilter, setRevenueFilter] = useState('all'); // all, high, medium, low
 
       const getDefaultTalents = () => [
             // Personal Finance & Investing
@@ -801,6 +802,14 @@
           });
         }
 
+        // Filter by revenue tranche
+        if (revenueFilter !== 'all') {
+          filtered = filtered.filter(t => {
+            const tranche = getRevenueTrancheLabel(t);
+            return tranche === revenueFilter;
+          });
+        }
+
         // Calculate scores and sort by selected criteria
         const sorted = filtered.map(t => {
           const copy = {};
@@ -836,7 +845,7 @@
         }
 
         return sorted;
-      }, [talents, weights, sortBy, searchQuery]);
+      }, [talents, weights, sortBy, searchQuery, revenueFilter]);
 
       const addTalent = () => {
         if (newTalent.name && newTalent.showName) {
@@ -1093,8 +1102,32 @@
               )
             ),
 
+            h('div', { className: 'mt-4 flex items-center gap-2 flex-wrap' },
+              h('span', { className: 'text-sm font-semibold text-gray-700' }, 'Revenue Filter:'),
+              h('button', {
+                onClick: () => setRevenueFilter('all'),
+                className: 'px-4 py-2 rounded-lg font-semibold text-sm transition ' + (revenueFilter === 'all' ? 'bg-cyan-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300')
+              }, 'All'),
+              h('button', {
+                onClick: () => setRevenueFilter('high'),
+                className: 'px-4 py-2 rounded-lg font-semibold text-sm transition ' + (revenueFilter === 'high' ? 'bg-purple-600 text-white' : 'bg-purple-100 text-purple-700 hover:bg-purple-200')
+              }, 'High (≥$9)'),
+              h('button', {
+                onClick: () => setRevenueFilter('medium'),
+                className: 'px-4 py-2 rounded-lg font-semibold text-sm transition ' + (revenueFilter === 'medium' ? 'bg-yellow-600 text-white' : 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200')
+              }, 'Medium ($6-9)'),
+              h('button', {
+                onClick: () => setRevenueFilter('low'),
+                className: 'px-4 py-2 rounded-lg font-semibold text-sm transition ' + (revenueFilter === 'low' ? 'bg-slate-600 text-white' : 'bg-slate-200 text-slate-700 hover:bg-slate-300')
+              }, 'Low (<$6)')
+            ),
+
             searchQuery && h('div', { className: 'mt-3 text-sm text-gray-600 font-medium' },
               'Showing ' + sortedTalents.length + ' of ' + talents.length + ' talents'
+            ),
+            
+            revenueFilter !== 'all' && !searchQuery && h('div', { className: 'mt-3 text-sm text-gray-600 font-medium' },
+              'Showing ' + sortedTalents.length + ' ' + revenueFilter + ' revenue talents'
             )
           ),
 
