@@ -103,25 +103,7 @@
       const [sortBy, setSortBy] = useState('score');
       const [searchQuery, setSearchQuery] = useState('');
 
-      useEffect(() => {
-        const savedTalents = localStorage.getItem('podcastTalents');
-        const savedWeights = localStorage.getItem('podcastWeights');
-        
-        if (savedTalents) {
-          try {
-            const loaded = JSON.parse(savedTalents);
-            // Add CPM/RPM fields if they don't exist
-            const updated = loaded.map(t => ({
-              ...t,
-              cpm: t.cpm || '',
-              rpm: t.rpm || ''
-            }));
-            setTalents(updated);
-          } catch (e) {
-            console.error('Error loading talents', e);
-          }
-        } else {
-          setTalents([
+      const getDefaultTalents = () => [
             // Personal Finance & Investing
             {
               id: 1,
@@ -709,7 +691,28 @@
               brandFit: 7,
               notes: "Current events commentary"
             }
-          ]);
+          ];
+
+      useEffect(() => {
+        const savedTalents = localStorage.getItem('podcastTalents');
+        const savedWeights = localStorage.getItem('podcastWeights');
+        
+        if (savedTalents) {
+          try {
+            const loaded = JSON.parse(savedTalents);
+            // Add CPM/RPM fields if they don't exist
+            const updated = loaded.map(t => ({
+              ...t,
+              cpm: t.cpm || '',
+              rpm: t.rpm || ''
+            }));
+            setTalents(updated);
+          } catch (e) {
+            console.error('Error loading talents', e);
+            setTalents(getDefaultTalents());
+          }
+        } else {
+          setTalents(getDefaultTalents());
         }
         
         if (savedWeights) {
@@ -720,6 +723,14 @@
           }
         }
       }, []);
+
+      const resetToDefaults = () => {
+        if (confirm('This will reset all data to the default talent list. Are you sure?')) {
+          const defaults = getDefaultTalents();
+          setTalents(defaults);
+          localStorage.setItem('podcastTalents', JSON.stringify(defaults));
+        }
+      };
 
       useEffect(() => {
         try {
@@ -864,12 +875,20 @@
                   )
                 )
               ),
-              h('button', {
-                onClick: () => setShowAddForm(!showAddForm),
-                className: 'bg-white text-cyan-700 px-4 py-2 rounded-lg hover:bg-cyan-50 transition font-semibold flex items-center gap-2 shadow-lg border-2 border-white'
-              },
-                h(PlusIcon),
-                'Add Talent'
+              h('div', { className: 'flex gap-2' },
+                h('button', {
+                  onClick: () => setShowAddForm(!showAddForm),
+                  className: 'bg-white text-cyan-700 px-4 py-2 rounded-lg hover:bg-cyan-50 transition font-semibold flex items-center gap-2 shadow-lg border-2 border-white'
+                },
+                  h(PlusIcon),
+                  'Add Talent'
+                ),
+                h('button', {
+                  onClick: resetToDefaults,
+                  className: 'bg-white/20 text-white px-4 py-2 rounded-lg hover:bg-white/30 transition font-semibold border-2 border-white/40'
+                },
+                  'Reset to Defaults'
+                )
               )
             ),
 
