@@ -777,7 +777,7 @@
       };
 
       const sortedTalents = useMemo(() => {
-        // Filter by search query (searches name, niche, CPM, RPM, and tranches)
+        // Filter by search query (searches name, niche, CPM, RPM)
         let filtered = talents;
         if (searchQuery.trim() !== '') {
           const query = searchQuery.toLowerCase();
@@ -788,11 +788,7 @@
             const cpmMatch = t.cpm && t.cpm.toLowerCase().includes(query);
             const rpmMatch = t.rpm && t.rpm.toLowerCase().includes(query);
             
-            // Check tranche matches (low, medium, high)
-            const trancheLabel = getRevenueTrancheLabel(t);
-            const trancheMatch = trancheLabel.includes(query);
-            
-            return nameMatch || nicheMatch || cpmMatch || rpmMatch || trancheMatch;
+            return nameMatch || nicheMatch || cpmMatch || rpmMatch;
           });
           
           // Prioritize name matches - sort so name matches come first
@@ -821,6 +817,20 @@
             if (sortBy === 'score') return b.score - a.score;
             if (sortBy === 'name') return a.name.localeCompare(b.name);
             if (sortBy === 'niche') return a.niche.localeCompare(b.niche);
+            if (sortBy === 'revenue') {
+              // Sort by revenue tranche: high > medium > low
+              const trancheOrder = { 'high': 3, 'medium': 2, 'low': 1 };
+              const aTranche = getRevenueTrancheLabel(a);
+              const bTranche = getRevenueTrancheLabel(b);
+              const diff = trancheOrder[bTranche] - trancheOrder[aTranche];
+              // If same tranche, sort by actual average revenue value
+              if (diff === 0) {
+                const aAvg = (parseDollarValue(a.cpm) + parseDollarValue(a.rpm)) / 2;
+                const bAvg = (parseDollarValue(b.cpm) + parseDollarValue(b.rpm)) / 2;
+                return bAvg - aAvg;
+              }
+              return diff;
+            }
             return 0;
           });
         }
@@ -1058,7 +1068,7 @@
                 ),
                 h('input', {
                   type: 'text',
-                  placeholder: 'Search by name (also searches niche, CPM, RPM, "low", "medium", "high")...',
+                  placeholder: 'Search by name (also searches niche, CPM, RPM)...',
                   value: searchQuery,
                   onChange: (e) => setSearchQuery(e.target.value),
                   className: 'w-full pl-10 pr-10 py-3 border-2 border-slate-300 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 focus:outline-none'
@@ -1077,23 +1087,14 @@
                 },
                   h('option', { value: 'score' }, 'Score (Highest First)'),
                   h('option', { value: 'name' }, 'Name (A-Z)'),
-                  h('option', { value: 'niche' }, 'Niche')
+                  h('option', { value: 'niche' }, 'Niche'),
+                  h('option', { value: 'revenue' }, 'Revenue (High to Low)')
                 )
               )
             ),
 
             searchQuery && h('div', { className: 'mt-3 text-sm text-gray-600 font-medium' },
               'Showing ' + sortedTalents.length + ' of ' + talents.length + ' talents'
-            ),
-            
-            !searchQuery && h('div', { className: 'mt-3 text-xs text-gray-500' },
-              'Revenue tranches: ',
-              h('span', { className: 'font-semibold' }, 'High'),
-              ' (avg ≥$9) • ',
-              h('span', { className: 'font-semibold' }, 'Medium'),
-              ' ($6-$9) • ',
-              h('span', { className: 'font-semibold' }, 'Low'),
-              ' (<$6) — Search "low", "medium", or "high" to filter'
             )
           ),
 
