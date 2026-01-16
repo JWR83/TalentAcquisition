@@ -83,63 +83,485 @@
             console.error('Error loading talents', e);
           }
         } else {
-          // Default talent data - only complete entries
           setTalents([
-            // Personal Finance & Investing (5/5)
-            { id: 1, name: "Ryan Scribner", showName: "Ryan Scribner", audienceSize: "800K", niche: "Personal Finance", engagement: 8, contentQuality: 8, growthPotential: 7, productionValue: 7, brandFit: 8, notes: "Strong finance content creator" },
-            { id: 2, name: "Nischa", showName: "Nischa", audienceSize: "1M", niche: "Personal Finance", engagement: 9, contentQuality: 8, growthPotential: 7, productionValue: 8, brandFit: 9, notes: "Popular finance channel" },
-            { id: 3, name: "Nate O'Brien", showName: "Nate O'Brien", audienceSize: "1.3M", niche: "Personal Finance", engagement: 9, contentQuality: 9, growthPotential: 7, productionValue: 8, brandFit: 9, notes: "Top finance YouTuber" },
-            { id: 4, name: "WhiteBoard Finance", showName: "WhiteBoard Finance", audienceSize: "948K", niche: "Personal Finance", engagement: 8, contentQuality: 8, growthPotential: 7, productionValue: 7, brandFit: 8, notes: "Educational finance content" },
-            { id: 5, name: "BeatTheBush", showName: "BeatTheBush", audienceSize: "500K", niche: "Personal Finance", engagement: 7, contentQuality: 7, growthPotential: 6, productionValue: 6, brandFit: 7, notes: "Finance tips and tricks" },
-            
-            // Technology & Gadget Reviews (5/5)
-            { id: 6, name: "Kevin Powell", showName: "Kevin Powell", audienceSize: "400K", niche: "Technology", engagement: 8, contentQuality: 9, growthPotential: 8, productionValue: 8, brandFit: 8, notes: "CSS and web development" },
-            { id: 7, name: "TechMeOut", showName: "TechMeOut", audienceSize: "400K", niche: "Technology", engagement: 7, contentQuality: 7, growthPotential: 7, productionValue: 7, brandFit: 7, notes: "Tech reviews and tutorials" },
-            { id: 8, name: "Premiere Gal", showName: "Premiere Gal", audienceSize: "500K", niche: "Technology", engagement: 8, contentQuality: 8, growthPotential: 7, productionValue: 8, brandFit: 8, notes: "Video editing tutorials" },
-            { id: 9, name: "The Future Tech", showName: "The Future Tech", audienceSize: "700K", niche: "Technology", engagement: 8, contentQuality: 7, growthPotential: 8, productionValue: 7, brandFit: 8, notes: "Future tech trends" },
-            { id: 10, name: "Brandon", showName: "Brandon", audienceSize: "400K", niche: "Technology", engagement: 7, contentQuality: 7, growthPotential: 8, productionValue: 7, brandFit: 7, notes: "Tech & Creator Economy" },
-            
-            // Digital Marketing & Affiliate Marketing (5/5)
-            { id: 11, name: "Pat Flynn", showName: "Pat Flynn", audienceSize: "470K", niche: "Digital Marketing", engagement: 9, contentQuality: 9, growthPotential: 7, productionValue: 8, brandFit: 9, notes: "Passive income expert" },
-            { id: 12, name: "Marcus Campbell", showName: "Marcus Campbell", audienceSize: "272K", niche: "Affiliate Marketing", engagement: 7, contentQuality: 7, growthPotential: 6, productionValue: 6, brandFit: 7, notes: "Affiliate marketing strategies" },
-            { id: 13, name: "H-Educate", showName: "H-Educate", audienceSize: "1M", niche: "Digital Marketing", engagement: 8, contentQuality: 8, growthPotential: 8, productionValue: 7, brandFit: 8, notes: "Marketing education" },
-            { id: 14, name: "Matt Diggity", showName: "Matt Diggity", audienceSize: "172K", niche: "Digital Marketing", engagement: 8, contentQuality: 9, growthPotential: 8, productionValue: 7, brandFit: 8, notes: "SEO and digital marketing" },
-            { id: 15, name: "Adrian Brambila", showName: "Adrian Brambila", audienceSize: "148K", niche: "Affiliate Marketing", engagement: 7, contentQuality: 7, growthPotential: 7, productionValue: 6, brandFit: 7, notes: "Side hustle content" },
-            
-            // Business & Entrepreneurship (2/5)
-            { id: 16, name: "Gillian Perkins", showName: "Gillian Perkins", audienceSize: "700K", niche: "Business", engagement: 8, contentQuality: 8, growthPotential: 7, productionValue: 8, brandFit: 8, notes: "Online business strategies" },
-            { id: 17, name: "Goal 90", showName: "Goal 90", audienceSize: "300K", niche: "Entrepreneurship", engagement: 7, contentQuality: 7, growthPotential: 7, productionValue: 6, brandFit: 7, notes: "Entrepreneurship content" },
-            
-            // Health & Fitness (5/5)
-            { id: 18, name: "Eleni Fit", showName: "Eleni Fit", audienceSize: "800K", niche: "Health & Fitness", engagement: 8, contentQuality: 8, growthPotential: 7, productionValue: 8, brandFit: 8, notes: "Fitness and wellness" },
-            { id: 19, name: "Ben Parkes", showName: "Ben Parkes", audienceSize: "400K", niche: "Health & Fitness", engagement: 7, contentQuality: 8, growthPotential: 7, productionValue: 7, brandFit: 7, notes: "Running channel" },
-            { id: 20, name: "Allen Ye", showName: "Allen Ye", audienceSize: "400K", niche: "Health & Fitness", engagement: 8, contentQuality: 8, growthPotential: 8, productionValue: 7, brandFit: 8, notes: "Fitness transformation content" },
-            { id: 21, name: "Brittany McCrystal", showName: "Brittany McCrystal", audienceSize: "500K", niche: "Health & Fitness", engagement: 8, contentQuality: 7, growthPotential: 7, productionValue: 7, brandFit: 8, notes: "Fitness and lifestyle" },
-            { id: 22, name: "Diana Ruiz", showName: "Diana Ruiz", audienceSize: "340K", niche: "Health & Fitness", engagement: 7, contentQuality: 7, growthPotential: 7, productionValue: 7, brandFit: 7, notes: "Fitness content creator" },
-            
-            // Real Estate (2/5)
-            { id: 23, name: "BiggerPockets", showName: "BiggerPockets", audienceSize: "700K", niche: "Real Estate", engagement: 8, contentQuality: 9, growthPotential: 7, productionValue: 8, brandFit: 9, notes: "Leading real estate education" },
-            { id: 24, name: "Kris Krohn", showName: "Kris Krohn", audienceSize: "764K", niche: "Real Estate", engagement: 8, contentQuality: 7, growthPotential: 7, productionValue: 7, brandFit: 8, notes: "Real estate investing" },
-            
-            // Food & Cooking (1/5)
-            { id: 25, name: "Simply Quinoa", showName: "Simply Quinoa", audienceSize: "500K", niche: "Food & Cooking", engagement: 7, contentQuality: 8, growthPotential: 6, productionValue: 8, brandFit: 7, notes: "Healthy cooking content" },
-            
-            // Beauty & Fashion (3/5)
-            { id: 26, name: "Malvika Sitlani", showName: "Malvika Sitlani", audienceSize: "800K", niche: "Beauty & Fashion", engagement: 8, contentQuality: 8, growthPotential: 7, productionValue: 8, brandFit: 8, notes: "Beauty and lifestyle" },
-            { id: 27, name: "Sahar Luna", showName: "Sahar Luna", audienceSize: "884K", niche: "Beauty & Fashion", engagement: 8, contentQuality: 8, growthPotential: 7, productionValue: 8, brandFit: 8, notes: "Beauty content creator" },
-            { id: 28, name: "Roshni Bhatia", showName: "Roshni Bhatia", audienceSize: "592K", niche: "Beauty & Fashion", engagement: 7, contentQuality: 7, growthPotential: 7, productionValue: 7, brandFit: 7, notes: "Beauty and fashion" },
-            
-            // Educational Content (3/5)
-            { id: 29, name: "Science Max", showName: "Science Max", audienceSize: "300K", niche: "Educational", engagement: 7, contentQuality: 8, growthPotential: 7, productionValue: 7, brandFit: 7, notes: "Science education" },
-            { id: 30, name: "Josh Horton", showName: "Josh Horton", audienceSize: "500K", niche: "Educational", engagement: 7, contentQuality: 8, growthPotential: 6, productionValue: 7, brandFit: 7, notes: "Juggling tutorials" },
-            { id: 31, name: "Tiago Forte", showName: "Tiago Forte", audienceSize: "400K", niche: "Educational", engagement: 8, contentQuality: 9, growthPotential: 8, productionValue: 7, brandFit: 8, notes: "Productivity education" },
-            
-            // Personal Development (5/5)
-            { id: 32, name: "Lisa Bilyeu", showName: "Lisa Bilyeu", audienceSize: "700K", niche: "Personal Development", engagement: 8, contentQuality: 9, growthPotential: 7, productionValue: 8, brandFit: 9, notes: "Empowerment and growth" },
-            { id: 33, name: "Cajun Koi Academy", showName: "Cajun Koi Academy", audienceSize: "975K", niche: "Personal Development", engagement: 8, contentQuality: 8, growthPotential: 7, productionValue: 7, brandFit: 8, notes: "Art and creativity" },
-            { id: 34, name: "Mathew Encina", showName: "Mathew Encina", audienceSize: "409K", niche: "Personal Development", engagement: 8, contentQuality: 9, growthPotential: 8, productionValue: 8, brandFit: 8, notes: "Creative business development" },
-            { id: 35, name: "Elizabeth Filips", showName: "Elizabeth Filips", audienceSize: "779K", niche: "Personal Development", engagement: 9, contentQuality: 9, growthPotential: 8, productionValue: 8, brandFit: 9, notes: "Study and productivity" },
-            { id: 36, name: "Rewirs", showName: "Rewirs", audienceSize: "2M", niche: "Personal Development", engagement: 9, contentQuality: 8, growthPotential: 7, productionValue: 8, brandFit: 8, notes: "Over range but notable" }
+            // Personal Finance & Investing
+            {
+              id: 1,
+              name: "Ryan Scribner",
+              showName: "Ryan Scribner",
+              audienceSize: "800K",
+              niche: "Personal Finance",
+              engagement: 8,
+              contentQuality: 8,
+              growthPotential: 7,
+              productionValue: 7,
+              brandFit: 8,
+              notes: "Strong finance content creator"
+            },
+            {
+              id: 2,
+              name: "Nischa",
+              showName: "Nischa",
+              audienceSize: "1M",
+              niche: "Personal Finance",
+              engagement: 9,
+              contentQuality: 8,
+              growthPotential: 7,
+              productionValue: 8,
+              brandFit: 9,
+              notes: "Popular finance channel"
+            },
+            {
+              id: 3,
+              name: "Nate O'Brien",
+              showName: "Nate O'Brien",
+              audienceSize: "1.3M",
+              niche: "Personal Finance",
+              engagement: 9,
+              contentQuality: 9,
+              growthPotential: 7,
+              productionValue: 8,
+              brandFit: 9,
+              notes: "Top finance YouTuber"
+            },
+            {
+              id: 4,
+              name: "WhiteBoard Finance",
+              showName: "WhiteBoard Finance",
+              audienceSize: "948K",
+              niche: "Personal Finance",
+              engagement: 8,
+              contentQuality: 8,
+              growthPotential: 7,
+              productionValue: 7,
+              brandFit: 8,
+              notes: "Educational finance content"
+            },
+            {
+              id: 5,
+              name: "BeatTheBush",
+              showName: "BeatTheBush",
+              audienceSize: "500K",
+              niche: "Personal Finance",
+              engagement: 7,
+              contentQuality: 7,
+              growthPotential: 6,
+              productionValue: 6,
+              brandFit: 7,
+              notes: "Finance tips and tricks"
+            },
+            // Technology & Gadget Reviews
+            {
+              id: 6,
+              name: "Kevin Powell",
+              showName: "Kevin Powell",
+              audienceSize: "400K",
+              niche: "Technology",
+              engagement: 8,
+              contentQuality: 9,
+              growthPotential: 8,
+              productionValue: 8,
+              brandFit: 8,
+              notes: "CSS and web development"
+            },
+            {
+              id: 7,
+              name: "TechMeOut",
+              showName: "TechMeOut",
+              audienceSize: "400K",
+              niche: "Technology",
+              engagement: 7,
+              contentQuality: 7,
+              growthPotential: 7,
+              productionValue: 7,
+              brandFit: 7,
+              notes: "Tech reviews and tutorials"
+            },
+            {
+              id: 8,
+              name: "Premiere Gal",
+              showName: "Premiere Gal",
+              audienceSize: "500K",
+              niche: "Technology",
+              engagement: 8,
+              contentQuality: 8,
+              growthPotential: 7,
+              productionValue: 8,
+              brandFit: 8,
+              notes: "Video editing tutorials"
+            },
+            {
+              id: 9,
+              name: "The Future Tech",
+              showName: "The Future Tech",
+              audienceSize: "700K",
+              niche: "Technology",
+              engagement: 8,
+              contentQuality: 7,
+              growthPotential: 8,
+              productionValue: 7,
+              brandFit: 8,
+              notes: "Future tech trends"
+            },
+            {
+              id: 10,
+              name: "Brandon",
+              showName: "Brandon",
+              audienceSize: "400K",
+              niche: "Technology",
+              engagement: 7,
+              contentQuality: 7,
+              growthPotential: 8,
+              productionValue: 7,
+              brandFit: 7,
+              notes: "Tech & Creator Economy"
+            },
+            // Digital Marketing & Affiliate Marketing
+            {
+              id: 11,
+              name: "Pat Flynn",
+              showName: "Pat Flynn",
+              audienceSize: "470K",
+              niche: "Digital Marketing",
+              engagement: 9,
+              contentQuality: 9,
+              growthPotential: 7,
+              productionValue: 8,
+              brandFit: 9,
+              notes: "Passive income expert"
+            },
+            {
+              id: 12,
+              name: "Marcus Campbell",
+              showName: "Marcus Campbell",
+              audienceSize: "272K",
+              niche: "Affiliate Marketing",
+              engagement: 7,
+              contentQuality: 7,
+              growthPotential: 6,
+              productionValue: 6,
+              brandFit: 7,
+              notes: "Affiliate marketing strategies"
+            },
+            {
+              id: 13,
+              name: "H-Educate",
+              showName: "H-Educate",
+              audienceSize: "1M",
+              niche: "Digital Marketing",
+              engagement: 8,
+              contentQuality: 8,
+              growthPotential: 8,
+              productionValue: 7,
+              brandFit: 8,
+              notes: "Marketing education"
+            },
+            {
+              id: 14,
+              name: "Matt Diggity",
+              showName: "Matt Diggity",
+              audienceSize: "172K",
+              niche: "Digital Marketing",
+              engagement: 8,
+              contentQuality: 9,
+              growthPotential: 8,
+              productionValue: 7,
+              brandFit: 8,
+              notes: "SEO and digital marketing"
+            },
+            {
+              id: 15,
+              name: "Adrian Brambila",
+              showName: "Adrian Brambila",
+              audienceSize: "148K",
+              niche: "Affiliate Marketing",
+              engagement: 7,
+              contentQuality: 7,
+              growthPotential: 7,
+              productionValue: 6,
+              brandFit: 7,
+              notes: "Side hustle content"
+            },
+            // Business & Entrepreneurship
+            {
+              id: 16,
+              name: "Gillian Perkins",
+              showName: "Gillian Perkins",
+              audienceSize: "700K",
+              niche: "Business",
+              engagement: 8,
+              contentQuality: 8,
+              growthPotential: 7,
+              productionValue: 8,
+              brandFit: 8,
+              notes: "Online business strategies"
+            },
+            {
+              id: 17,
+              name: "Goal 90",
+              showName: "Goal 90",
+              audienceSize: "300K",
+              niche: "Entrepreneurship",
+              engagement: 7,
+              contentQuality: 7,
+              growthPotential: 7,
+              productionValue: 6,
+              brandFit: 7,
+              notes: "Entrepreneurship content"
+            },
+            // Health & Fitness
+            {
+              id: 18,
+              name: "Eleni Fit",
+              showName: "Eleni Fit",
+              audienceSize: "800K",
+              niche: "Health & Fitness",
+              engagement: 8,
+              contentQuality: 8,
+              growthPotential: 7,
+              productionValue: 8,
+              brandFit: 8,
+              notes: "Fitness and wellness"
+            },
+            {
+              id: 19,
+              name: "Ben Parkes",
+              showName: "Ben Parkes",
+              audienceSize: "400K",
+              niche: "Health & Fitness",
+              engagement: 7,
+              contentQuality: 8,
+              growthPotential: 7,
+              productionValue: 7,
+              brandFit: 7,
+              notes: "Running channel"
+            },
+            {
+              id: 20,
+              name: "Allen Ye",
+              showName: "Allen Ye",
+              audienceSize: "400K",
+              niche: "Health & Fitness",
+              engagement: 8,
+              contentQuality: 8,
+              growthPotential: 8,
+              productionValue: 7,
+              brandFit: 8,
+              notes: "Fitness transformation content"
+            },
+            {
+              id: 21,
+              name: "Brittany McCrystal",
+              showName: "Brittany McCrystal",
+              audienceSize: "500K",
+              niche: "Health & Fitness",
+              engagement: 8,
+              contentQuality: 7,
+              growthPotential: 7,
+              productionValue: 7,
+              brandFit: 8,
+              notes: "Fitness and lifestyle"
+            },
+            {
+              id: 22,
+              name: "Diana Ruiz",
+              showName: "Diana Ruiz",
+              audienceSize: "340K",
+              niche: "Health & Fitness",
+              engagement: 7,
+              contentQuality: 7,
+              growthPotential: 7,
+              productionValue: 7,
+              brandFit: 7,
+              notes: "Fitness content creator"
+            },
+            // Real Estate
+            {
+              id: 23,
+              name: "BiggerPockets",
+              showName: "BiggerPockets",
+              audienceSize: "700K",
+              niche: "Real Estate",
+              engagement: 8,
+              contentQuality: 9,
+              growthPotential: 7,
+              productionValue: 8,
+              brandFit: 9,
+              notes: "Leading real estate education"
+            },
+            {
+              id: 24,
+              name: "Kris Krohn",
+              showName: "Kris Krohn",
+              audienceSize: "764K",
+              niche: "Real Estate",
+              engagement: 8,
+              contentQuality: 7,
+              growthPotential: 7,
+              productionValue: 7,
+              brandFit: 8,
+              notes: "Real estate investing"
+            },
+            // Food & Cooking
+            {
+              id: 25,
+              name: "Simply Quinoa",
+              showName: "Simply Quinoa",
+              audienceSize: "500K",
+              niche: "Food & Cooking",
+              engagement: 7,
+              contentQuality: 8,
+              growthPotential: 6,
+              productionValue: 8,
+              brandFit: 7,
+              notes: "Healthy cooking content"
+            },
+            // Beauty & Fashion
+            {
+              id: 26,
+              name: "Malvika Sitlani",
+              showName: "Malvika Sitlani",
+              audienceSize: "800K",
+              niche: "Beauty & Fashion",
+              engagement: 8,
+              contentQuality: 8,
+              growthPotential: 7,
+              productionValue: 8,
+              brandFit: 8,
+              notes: "Beauty and lifestyle"
+            },
+            {
+              id: 27,
+              name: "Sahar Luna",
+              showName: "Sahar Luna",
+              audienceSize: "884K",
+              niche: "Beauty & Fashion",
+              engagement: 8,
+              contentQuality: 8,
+              growthPotential: 7,
+              productionValue: 8,
+              brandFit: 8,
+              notes: "Beauty content creator"
+            },
+            {
+              id: 28,
+              name: "Roshni Bhatia",
+              showName: "Roshni Bhatia",
+              audienceSize: "592K",
+              niche: "Beauty & Fashion",
+              engagement: 7,
+              contentQuality: 7,
+              growthPotential: 7,
+              productionValue: 7,
+              brandFit: 7,
+              notes: "Beauty and fashion"
+            },
+            // Educational Content
+            {
+              id: 29,
+              name: "Science Max",
+              showName: "Science Max",
+              audienceSize: "300K",
+              niche: "Educational",
+              engagement: 7,
+              contentQuality: 8,
+              growthPotential: 7,
+              productionValue: 7,
+              brandFit: 7,
+              notes: "Science education"
+            },
+            {
+              id: 30,
+              name: "Josh Horton",
+              showName: "Josh Horton",
+              audienceSize: "500K",
+              niche: "Educational",
+              engagement: 7,
+              contentQuality: 8,
+              growthPotential: 6,
+              productionValue: 7,
+              brandFit: 7,
+              notes: "Juggling tutorials"
+            },
+            {
+              id: 31,
+              name: "Tiago Forte",
+              showName: "Tiago Forte",
+              audienceSize: "400K",
+              niche: "Educational",
+              engagement: 8,
+              contentQuality: 9,
+              growthPotential: 8,
+              productionValue: 7,
+              brandFit: 8,
+              notes: "Productivity education"
+            },
+            // Personal Development
+            {
+              id: 32,
+              name: "Lisa Bilyeu",
+              showName: "Lisa Bilyeu",
+              audienceSize: "700K",
+              niche: "Personal Development",
+              engagement: 8,
+              contentQuality: 9,
+              growthPotential: 7,
+              productionValue: 8,
+              brandFit: 9,
+              notes: "Empowerment and growth"
+            },
+            {
+              id: 33,
+              name: "Cajun Koi Academy",
+              showName: "Cajun Koi Academy",
+              audienceSize: "975K",
+              niche: "Personal Development",
+              engagement: 8,
+              contentQuality: 8,
+              growthPotential: 7,
+              productionValue: 7,
+              brandFit: 8,
+              notes: "Art and creativity"
+            },
+            {
+              id: 34,
+              name: "Mathew Encina",
+              showName: "Mathew Encina",
+              audienceSize: "409K",
+              niche: "Personal Development",
+              engagement: 8,
+              contentQuality: 9,
+              growthPotential: 8,
+              productionValue: 8,
+              brandFit: 8,
+              notes: "Creative business development"
+            },
+            {
+              id: 35,
+              name: "Elizabeth Filips",
+              showName: "Elizabeth Filips",
+              audienceSize: "779K",
+              niche: "Personal Development",
+              engagement: 9,
+              contentQuality: 9,
+              growthPotential: 8,
+              productionValue: 8,
+              brandFit: 9,
+              notes: "Study and productivity"
+            },
+            {
+              id: 36,
+              name: "Rewirs",
+              showName: "Rewirs",
+              audienceSize: "2M",
+              niche: "Personal Development",
+              engagement: 9,
+              contentQuality: 8,
+              growthPotential: 7,
+              productionValue: 8,
+              brandFit: 8,
+              notes: "Over range but notable"
+            }
           ]);
         }
         
