@@ -769,9 +769,18 @@
             (t.cpm && t.cpm.toLowerCase().includes(query)) ||
             (t.rpm && t.rpm.toLowerCase().includes(query))
           );
+          
+          // Prioritize name matches - sort so name matches come first
+          filtered.sort((a, b) => {
+            const aNameMatch = a.name.toLowerCase().includes(query);
+            const bNameMatch = b.name.toLowerCase().includes(query);
+            if (aNameMatch && !bNameMatch) return -1;
+            if (!aNameMatch && bNameMatch) return 1;
+            return 0;
+          });
         }
 
-        // Calculate scores and sort
+        // Calculate scores and sort by selected criteria
         const sorted = filtered.map(t => {
           const copy = {};
           for (let key in t) {
@@ -781,12 +790,15 @@
           return copy;
         });
 
-        sorted.sort((a, b) => {
-          if (sortBy === 'score') return b.score - a.score;
-          if (sortBy === 'name') return a.name.localeCompare(b.name);
-          if (sortBy === 'niche') return a.niche.localeCompare(b.niche);
-          return 0;
-        });
+        // Only apply secondary sorting if not searching, or if sorting is explicitly changed
+        if (!searchQuery.trim() || sortBy !== 'score') {
+          sorted.sort((a, b) => {
+            if (sortBy === 'score') return b.score - a.score;
+            if (sortBy === 'name') return a.name.localeCompare(b.name);
+            if (sortBy === 'niche') return a.niche.localeCompare(b.niche);
+            return 0;
+          });
+        }
 
         return sorted;
       }, [talents, weights, sortBy, searchQuery]);
@@ -1021,7 +1033,7 @@
                 ),
                 h('input', {
                   type: 'text',
-                  placeholder: 'Search by name, niche, CPM, or RPM...',
+                  placeholder: 'Search by name (also searches niche, CPM, RPM)...',
                   value: searchQuery,
                   onChange: (e) => setSearchQuery(e.target.value),
                   className: 'w-full pl-10 pr-10 py-3 border-2 border-slate-300 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 focus:outline-none'
