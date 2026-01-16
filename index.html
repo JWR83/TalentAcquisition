@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 
 <html lang="en">
@@ -9,8 +10,54 @@
   <meta name="apple-mobile-web-app-title" content="Talent Ranker">
   <title>Podcast Talent Ranker</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'navy': {
+              50: '#e6f1f5',
+              100: '#cce3eb',
+              200: '#99c7d7',
+              300: '#66abc3',
+              400: '#338faf',
+              500: '#00739b',
+              600: '#005c7c',
+              700: '#00455d',
+              800: '#002e3e',
+              900: '#00171f'
+            },
+            'sea': {
+              50: '#e6f7f7',
+              100: '#ccefef',
+              200: '#99dfdf',
+              300: '#66cfcf',
+              400: '#33bfbf',
+              500: '#00afaf',
+              600: '#008c8c',
+              700: '#006969',
+              800: '#004646',
+              900: '#002323'
+            },
+            'coral': {
+              50: '#fef2f2',
+              100: '#fee5e5',
+              200: '#fdcbcb',
+              300: '#fcb1b1',
+              400: '#fb9797',
+              500: '#fa7d7d',
+              600: '#c86464',
+              700: '#964b4b',
+              800: '#643232',
+              900: '#321919'
+            }
+          }
+        }
+      }
+    }
+  </script>
 </head>
-<body class="bg-gradient-to-br from-purple-50 to-blue-50">
+<body class="bg-gradient-to-br from-navy-50 via-sea-50 to-navy-100 min-h-screen">
   <div id="app"></div>
 
   <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
@@ -19,6 +66,22 @@
 
   <script>
     const { createElement: h, useState, useEffect, useMemo } = React;
+    
+    // Average CPM/RPM data by niche
+    const NICHE_CPM_DATA = {
+      'Personal Finance': { cpm: 18, rpm: 12 },
+      'Technology': { cpm: 12, rpm: 8 },
+      'Digital Marketing': { cpm: 15, rpm: 10 },
+      'Affiliate Marketing': { cpm: 14, rpm: 9 },
+      'Business': { cpm: 16, rpm: 11 },
+      'Entrepreneurship': { cpm: 15, rpm: 10 },
+      'Health & Fitness': { cpm: 8, rpm: 5 },
+      'Real Estate': { cpm: 20, rpm: 14 },
+      'Food & Cooking': { cpm: 6, rpm: 4 },
+      'Beauty & Fashion': { cpm: 10, rpm: 7 },
+      'Educational': { cpm: 9, rpm: 6 },
+      'Personal Development': { cpm: 11, rpm: 7 }
+    };
     
     const PlusIcon = () => h('svg', { width: 20, height: 20, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: 2 },
       h('line', { x1: 12, y1: 5, x2: 12, y2: 19 }),
@@ -47,6 +110,11 @@
       h('path', { d: 'm21 21-4.35-4.35' })
     );
 
+    const DollarIcon = () => h('svg', { width: 16, height: 16, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: 2 },
+      h('line', { x1: 12, y1: 1, x2: 12, y2: 23 }),
+      h('path', { d: 'M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6' })
+    );
+
     const App = () => {
       const [talents, setTalents] = useState([]);
       const [weights, setWeights] = useState({
@@ -71,6 +139,7 @@
       });
       const [sortBy, setSortBy] = useState('score');
       const [nicheSearch, setNicheSearch] = useState('');
+      const [cpmFilter, setCpmFilter] = useState('all');
 
       useEffect(() => {
         const savedTalents = localStorage.getItem('podcastTalents');
@@ -600,6 +669,10 @@
         ).toFixed(2);
       };
 
+      const getCPMData = (niche) => {
+        return NICHE_CPM_DATA[niche] || { cpm: 10, rpm: 7 };
+      };
+
       const sortedTalents = useMemo(() => {
         // First filter by niche search
         let filtered = talents;
@@ -609,6 +682,17 @@
           );
         }
 
+        // Filter by CPM range
+        if (cpmFilter !== 'all') {
+          filtered = filtered.filter(t => {
+            const cpmData = getCPMData(t.niche);
+            if (cpmFilter === 'high') return cpmData.cpm >= 15;
+            if (cpmFilter === 'medium') return cpmData.cpm >= 10 && cpmData.cpm < 15;
+            if (cpmFilter === 'low') return cpmData.cpm < 10;
+            return true;
+          });
+        }
+
         // Then calculate scores and sort
         const sorted = filtered.map(t => {
           const copy = {};
@@ -616,6 +700,7 @@
             copy[key] = t[key];
           }
           copy.score = parseFloat(calculateScore(t));
+          copy.cpmData = getCPMData(t.niche);
           return copy;
         });
 
@@ -623,11 +708,12 @@
           if (sortBy === 'score') return b.score - a.score;
           if (sortBy === 'name') return a.name.localeCompare(b.name);
           if (sortBy === 'niche') return a.niche.localeCompare(b.niche);
+          if (sortBy === 'cpm') return b.cpmData.cpm - a.cpmData.cpm;
           return 0;
         });
 
         return sorted;
-      }, [talents, weights, sortBy, nicheSearch]);
+      }, [talents, weights, sortBy, nicheSearch, cpmFilter]);
 
       const addTalent = () => {
         if (newTalent.name && newTalent.showName) {
@@ -682,9 +768,9 @@
       };
 
       const getScoreColor = (score) => {
-        if (score >= 8) return 'text-green-600 bg-green-50';
-        if (score >= 6) return 'text-yellow-600 bg-yellow-50';
-        return 'text-red-600 bg-red-50';
+        if (score >= 8) return 'text-sea-700 bg-sea-50 border-sea-200';
+        if (score >= 6) return 'text-coral-700 bg-coral-50 border-coral-200';
+        return 'text-navy-700 bg-navy-50 border-navy-200';
       };
 
       const getRankMedal = (index) => {
@@ -694,32 +780,38 @@
         return '#' + (index + 1);
       };
 
+      const getCPMColor = (cpm) => {
+        if (cpm >= 15) return 'text-sea-700 bg-sea-100';
+        if (cpm >= 10) return 'text-coral-600 bg-coral-100';
+        return 'text-navy-600 bg-navy-100';
+      };
+
       return h('div', { className: 'min-h-screen p-4 md:p-6' },
         h('div', { className: 'max-w-7xl mx-auto' },
-          h('div', { className: 'bg-white rounded-xl shadow-lg p-4 md:p-6 mb-6' },
+          h('div', { className: 'bg-white rounded-2xl shadow-xl border border-navy-100 p-6 md:p-8 mb-6' },
             h('div', { className: 'flex items-center justify-between mb-6 flex-wrap gap-4' },
               h('div', null,
-                h('h1', { className: 'text-2xl md:text-3xl font-bold text-gray-800 flex items-center gap-2' },
+                h('h1', { className: 'text-3xl md:text-4xl font-bold text-navy-800 flex items-center gap-3' },
                   h(AwardIcon),
                   'Talent Ranker'
                 ),
-                h('p', { className: 'text-gray-600 mt-1 text-sm md:text-base' }, 'Evaluate and rank podcast acquisitions')
+                h('p', { className: 'text-navy-600 mt-2 text-sm md:text-base' }, 'Evaluate and rank podcast acquisitions')
               ),
               h('button', {
                 onClick: () => setShowAddForm(!showAddForm),
-                className: 'bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition flex items-center gap-2'
+                className: 'bg-navy-600 text-white px-6 py-3 rounded-xl hover:bg-navy-700 shadow-lg hover:shadow-xl flex items-center gap-2 font-semibold'
               },
                 h(PlusIcon),
                 'Add Talent'
               )
             ),
 
-            h('div', { className: 'bg-gray-50 rounded-lg p-4 mb-6' },
-              h('h3', { className: 'font-semibold text-gray-700 mb-3' }, 'Criteria Weights (%)'),
+            h('div', { className: 'bg-gradient-to-br from-navy-50 to-sea-50 rounded-xl shadow-inner border border-navy-100 p-6 mb-6' },
+              h('h3', { className: 'font-bold text-navy-800 mb-4 text-lg' }, 'Criteria Weights (%)'),
               h('div', { className: 'grid grid-cols-2 md:grid-cols-5 gap-4' },
                 Object.keys(weights).map(key =>
                   h('div', { key: key },
-                    h('label', { className: 'text-sm text-gray-600 capitalize block mb-1' },
+                    h('label', { className: 'text-sm text-navy-700 font-medium capitalize block mb-2' },
                       key.replace(/([A-Z])/g, ' $1').trim()
                     ),
                     h('input', {
@@ -728,54 +820,54 @@
                       max: '100',
                       value: weights[key],
                       onChange: (e) => updateWeight(key, parseInt(e.target.value) || 0),
-                      className: 'w-full px-3 py-2 border rounded-lg'
+                      className: 'w-full px-4 py-2 border-2 border-navy-200 rounded-lg focus:border-sea-500 focus:outline-none bg-white shadow-sm'
                     })
                   )
                 )
               ),
-              h('div', { className: 'mt-2 text-sm text-gray-600' },
+              h('div', { className: 'mt-3 text-sm font-semibold text-navy-700' },
                 'Total: ' + Object.values(weights).reduce((a, b) => a + b, 0) + '%',
                 Object.values(weights).reduce((a, b) => a + b, 0) !== 100 &&
-                  h('span', { className: 'text-red-600 ml-2' }, '⚠ Should equal 100%')
+                  h('span', { className: 'text-coral-600 ml-2' }, '⚠ Should equal 100%')
               )
             ),
 
-            showAddForm && h('div', { className: 'bg-blue-50 rounded-lg p-4 mb-6' },
-              h('h3', { className: 'font-semibold text-gray-700 mb-3' }, 'Add New Talent'),
+            showAddForm && h('div', { className: 'bg-gradient-to-br from-sea-50 to-navy-50 rounded-xl shadow-inner border border-sea-200 p-6 mb-6' },
+              h('h3', { className: 'font-bold text-navy-800 mb-4 text-lg' }, 'Add New Talent'),
               h('div', { className: 'grid grid-cols-1 md:grid-cols-2 gap-4 mb-4' },
                 h('input', {
                   type: 'text',
                   placeholder: 'Name',
                   value: newTalent.name,
                   onChange: (e) => updateNewTalent('name', e.target.value),
-                  className: 'px-3 py-2 border rounded-lg'
+                  className: 'px-4 py-3 border-2 border-navy-200 rounded-lg focus:border-sea-500 focus:outline-none shadow-sm'
                 }),
                 h('input', {
                   type: 'text',
                   placeholder: 'Show Name',
                   value: newTalent.showName,
                   onChange: (e) => updateNewTalent('showName', e.target.value),
-                  className: 'px-3 py-2 border rounded-lg'
+                  className: 'px-4 py-3 border-2 border-navy-200 rounded-lg focus:border-sea-500 focus:outline-none shadow-sm'
                 }),
                 h('input', {
                   type: 'text',
                   placeholder: 'Audience Size (e.g., 50K)',
                   value: newTalent.audienceSize,
                   onChange: (e) => updateNewTalent('audienceSize', e.target.value),
-                  className: 'px-3 py-2 border rounded-lg'
+                  className: 'px-4 py-3 border-2 border-navy-200 rounded-lg focus:border-sea-500 focus:outline-none shadow-sm'
                 }),
                 h('input', {
                   type: 'text',
                   placeholder: 'Niche',
                   value: newTalent.niche,
                   onChange: (e) => updateNewTalent('niche', e.target.value),
-                  className: 'px-3 py-2 border rounded-lg'
+                  className: 'px-4 py-3 border-2 border-navy-200 rounded-lg focus:border-sea-500 focus:outline-none shadow-sm'
                 })
               ),
               h('div', { className: 'grid grid-cols-2 md:grid-cols-5 gap-4 mb-4' },
                 ['engagement', 'contentQuality', 'growthPotential', 'productionValue', 'brandFit'].map(field =>
                   h('div', { key: field },
-                    h('label', { className: 'text-sm text-gray-600 capitalize block mb-1' },
+                    h('label', { className: 'text-sm text-navy-700 font-medium capitalize block mb-2' },
                       field.replace(/([A-Z])/g, ' $1').trim() + ' (1-10)'
                     ),
                     h('input', {
@@ -784,7 +876,7 @@
                       max: '10',
                       value: newTalent[field],
                       onChange: (e) => updateNewTalent(field, parseInt(e.target.value) || 1),
-                      className: 'w-full px-3 py-2 border rounded-lg'
+                      className: 'w-full px-4 py-2 border-2 border-navy-200 rounded-lg focus:border-sea-500 focus:outline-none shadow-sm'
                     })
                   )
                 )
@@ -793,24 +885,24 @@
                 placeholder: 'Notes',
                 value: newTalent.notes,
                 onChange: (e) => updateNewTalent('notes', e.target.value),
-                className: 'w-full px-3 py-2 border rounded-lg mb-4',
-                rows: '2'
+                className: 'w-full px-4 py-3 border-2 border-navy-200 rounded-lg mb-4 focus:border-sea-500 focus:outline-none shadow-sm',
+                rows: '3'
               }),
-              h('div', { className: 'flex gap-2' },
+              h('div', { className: 'flex gap-3' },
                 h('button', {
                   onClick: addTalent,
-                  className: 'bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition'
+                  className: 'bg-sea-600 text-white px-6 py-3 rounded-lg hover:bg-sea-700 shadow-md font-semibold'
                 }, 'Add Talent'),
                 h('button', {
                   onClick: () => setShowAddForm(false),
-                  className: 'bg-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-400 transition'
+                  className: 'bg-navy-200 text-navy-700 px-6 py-3 rounded-lg hover:bg-navy-300 shadow-md font-semibold'
                 }, 'Cancel')
               )
             ),
 
-            h('div', { className: 'flex flex-col md:flex-row items-stretch md:items-center gap-4' },
+            h('div', { className: 'flex flex-col md:flex-row items-stretch md:items-center gap-4 mb-4' },
               h('div', { className: 'relative flex-1' },
-                h('div', { className: 'absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400' },
+                h('div', { className: 'absolute left-4 top-1/2 transform -translate-y-1/2 text-navy-400' },
                   h(SearchIcon)
                 ),
                 h('input', {
@@ -818,78 +910,112 @@
                   placeholder: 'Search by niche...',
                   value: nicheSearch,
                   onChange: (e) => setNicheSearch(e.target.value),
-                  className: 'w-full pl-10 pr-3 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent'
+                  className: 'w-full pl-12 pr-4 py-3 border-2 border-navy-200 rounded-lg focus:ring-2 focus:ring-sea-500 focus:border-transparent shadow-sm'
                 }),
                 nicheSearch && h('button', {
                   onClick: () => setNicheSearch(''),
-                  className: 'absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600'
+                  className: 'absolute right-4 top-1/2 transform -translate-y-1/2 text-navy-400 hover:text-navy-600 font-bold'
                 }, '✕')
               ),
               h('div', { className: 'flex items-center gap-2' },
-                h('span', { className: 'text-gray-700 font-medium whitespace-nowrap' }, 'Sort by:'),
+                h('span', { className: 'text-navy-700 font-semibold whitespace-nowrap' }, 'Sort:'),
                 h('select', {
                   value: sortBy,
                   onChange: (e) => setSortBy(e.target.value),
-                  className: 'px-3 py-2 border rounded-lg'
+                  className: 'px-4 py-3 border-2 border-navy-200 rounded-lg focus:border-sea-500 focus:outline-none shadow-sm font-medium'
                 },
-                  h('option', { value: 'score' }, 'Score (Highest First)'),
-                  h('option', { value: 'name' }, 'Name (A-Z)'),
+                  h('option', { value: 'score' }, 'Score'),
+                  h('option', { value: 'cpm' }, 'CPM'),
+                  h('option', { value: 'name' }, 'Name'),
                   h('option', { value: 'niche' }, 'Niche')
                 )
               )
             ),
 
-            nicheSearch && h('div', { className: 'mt-3 text-sm text-gray-600' },
+            h('div', { className: 'flex items-center gap-2 flex-wrap' },
+              h('span', { className: 'text-navy-700 font-semibold' }, 'CPM Range:'),
+              h('button', {
+                onClick: () => setCpmFilter('all'),
+                className: `px-4 py-2 rounded-lg font-medium shadow-sm ${cpmFilter === 'all' ? 'bg-navy-600 text-white' : 'bg-white text-navy-600 border-2 border-navy-200'}`
+              }, 'All'),
+              h('button', {
+                onClick: () => setCpmFilter('high'),
+                className: `px-4 py-2 rounded-lg font-medium shadow-sm ${cpmFilter === 'high' ? 'bg-sea-600 text-white' : 'bg-white text-sea-600 border-2 border-sea-200'}`
+              }, 'High ($15+)'),
+              h('button', {
+                onClick: () => setCpmFilter('medium'),
+                className: `px-4 py-2 rounded-lg font-medium shadow-sm ${cpmFilter === 'medium' ? 'bg-coral-600 text-white' : 'bg-white text-coral-600 border-2 border-coral-200'}`
+              }, 'Medium ($10-15)'),
+              h('button', {
+                onClick: () => setCpmFilter('low'),
+                className: `px-4 py-2 rounded-lg font-medium shadow-sm ${cpmFilter === 'low' ? 'bg-navy-600 text-white' : 'bg-white text-navy-600 border-2 border-navy-200'}`
+              }, 'Low (<$10)')
+            ),
+
+            (nicheSearch || cpmFilter !== 'all') && h('div', { className: 'mt-4 text-sm text-navy-600 font-medium' },
               'Showing ' + sortedTalents.length + ' of ' + talents.length + ' talents'
             )
           ),
 
-          h('div', { className: 'space-y-4' },
+          h('div', { className: 'space-y-5' },
             sortedTalents.map((talent, index) =>
-              h('div', { key: talent.id, className: 'bg-white rounded-xl shadow-lg p-4 md:p-6 hover:shadow-xl transition' },
-                h('div', { className: 'flex items-start justify-between mb-4 gap-4' },
-                  h('div', { className: 'flex items-start gap-2 md:gap-4 flex-1' },
-                    h('div', { className: 'text-xl md:text-2xl font-bold text-gray-400 min-w-[50px]' },
+              h('div', { 
+                key: talent.id, 
+                className: 'bg-white rounded-2xl shadow-xl hover:shadow-2xl border-2 border-navy-100 p-6 md:p-8'
+              },
+                h('div', { className: 'flex items-start justify-between mb-6 gap-4' },
+                  h('div', { className: 'flex items-start gap-4 flex-1' },
+                    h('div', { className: 'text-2xl md:text-3xl font-bold text-navy-300 min-w-[60px]' },
                       getRankMedal(index)
                     ),
                     h('div', { className: 'flex-1 min-w-0' },
-                      h('div', { className: 'flex items-center gap-2 md:gap-3 mb-2 flex-wrap' },
-                        h('h2', { className: 'text-lg md:text-xl font-bold text-gray-800 truncate' }, talent.name),
-                        h('span', { className: 'px-3 py-1 rounded-full text-sm font-semibold ' + getScoreColor(talent.score) },
+                      h('div', { className: 'flex items-center gap-3 mb-3 flex-wrap' },
+                        h('h2', { className: 'text-xl md:text-2xl font-bold text-navy-800 truncate' }, talent.name),
+                        h('span', { className: 'px-4 py-2 rounded-xl text-sm font-bold border-2 ' + getScoreColor(talent.score) },
                           'Score: ' + talent.score + '/10'
                         )
                       ),
-                      h('div', { className: 'flex items-center gap-2 md:gap-4 text-sm md:text-base text-gray-600 mb-2 flex-wrap' },
-                        h('span', { className: 'font-semibold truncate' }, talent.showName),
-                        h('span', { className: 'flex items-center gap-1' },
+                      h('div', { className: 'flex items-center gap-4 text-sm md:text-base text-navy-600 mb-3 flex-wrap' },
+                        h('span', { className: 'font-bold truncate' }, talent.showName),
+                        h('span', { className: 'flex items-center gap-1 font-semibold' },
                           h(UsersIcon),
                           talent.audienceSize
                         ),
-                        h('span', { className: 'px-2 py-1 bg-purple-100 text-purple-700 rounded text-sm' },
+                        h('span', { className: 'px-3 py-1 bg-gradient-to-r from-navy-500 to-sea-500 text-white rounded-lg text-sm font-semibold shadow-md' },
                           talent.niche
                         )
                       ),
-                      talent.notes && h('p', { className: 'text-gray-600 text-sm italic' }, talent.notes)
+                      h('div', { className: 'flex items-center gap-4 mb-3 flex-wrap' },
+                        h('div', { className: 'flex items-center gap-2 px-3 py-2 rounded-lg font-bold text-sm ' + getCPMColor(talent.cpmData.cpm) },
+                          h(DollarIcon),
+                          'CPM: $' + talent.cpmData.cpm
+                        ),
+                        h('div', { className: 'flex items-center gap-2 px-3 py-2 rounded-lg font-bold text-sm ' + getCPMColor(talent.cpmData.rpm) },
+                          h(DollarIcon),
+                          'RPM: $' + talent.cpmData.rpm
+                        )
+                      ),
+                      talent.notes && h('p', { className: 'text-navy-600 text-sm italic bg-navy-50 p-3 rounded-lg border border-navy-100' }, talent.notes)
                     )
                   ),
                   h('button', {
                     onClick: () => deleteTalent(talent.id),
-                    className: 'text-red-500 hover:text-red-700 transition flex-shrink-0'
+                    className: 'text-coral-500 hover:text-coral-700 hover:bg-coral-50 p-2 rounded-lg flex-shrink-0'
                   }, h(TrashIcon))
                 ),
 
-                h('div', { className: 'grid grid-cols-2 md:grid-cols-5 gap-4' },
+                h('div', { className: 'grid grid-cols-2 md:grid-cols-5 gap-4 bg-gradient-to-br from-navy-50 to-sea-50 p-4 rounded-xl border border-navy-100' },
                   ['engagement', 'contentQuality', 'growthPotential', 'productionValue', 'brandFit'].map(field =>
                     h('div', { key: field },
-                      h('div', { className: 'flex items-center justify-between mb-1' },
-                        h('label', { className: 'text-xs text-gray-600 capitalize' },
+                      h('div', { className: 'flex items-center justify-between mb-2' },
+                        h('label', { className: 'text-xs text-navy-700 font-bold capitalize' },
                           field.replace(/([A-Z])/g, ' $1').trim()
                         ),
-                        h('span', { className: 'text-xs font-semibold text-gray-700' }, talent[field] + '/10')
+                        h('span', { className: 'text-xs font-bold text-navy-800 bg-white px-2 py-1 rounded-md shadow-sm' }, talent[field] + '/10')
                       ),
-                      h('div', { className: 'h-2 bg-gray-200 rounded-full overflow-hidden' },
+                      h('div', { className: 'h-3 bg-navy-200 rounded-full overflow-hidden shadow-inner' },
                         h('div', {
-                          className: 'h-full bg-purple-600 transition-all',
+                          className: 'h-full bg-gradient-to-r from-sea-500 to-navy-600 shadow-sm',
                           style: { width: (talent[field] / 10 * 100) + '%' }
                         })
                       )
@@ -900,12 +1026,12 @@
             )
           ),
 
-          sortedTalents.length === 0 && talents.length > 0 && h('div', { className: 'bg-white rounded-xl shadow-lg p-12 text-center' },
-            h('p', { className: 'text-gray-500 text-lg' }, 'No talents match your search. Try a different niche.')
+          sortedTalents.length === 0 && talents.length > 0 && h('div', { className: 'bg-white rounded-2xl shadow-xl border-2 border-navy-100 p-12 text-center' },
+            h('p', { className: 'text-navy-600 text-lg font-medium' }, 'No talents match your search. Try different filters.')
           ),
 
-          talents.length === 0 && h('div', { className: 'bg-white rounded-xl shadow-lg p-12 text-center' },
-            h('p', { className: 'text-gray-500 text-lg' }, 'No talent added yet. Click "Add Talent" to get started!')
+          talents.length === 0 && h('div', { className: 'bg-white rounded-2xl shadow-xl border-2 border-navy-100 p-12 text-center' },
+            h('p', { className: 'text-navy-600 text-lg font-medium' }, 'No talent added yet. Click "Add Talent" to get started!')
           )
         )
       );
