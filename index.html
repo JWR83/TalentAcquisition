@@ -8,36 +8,10 @@
   <meta name="apple-mobile-web-app-title" content="Talent Ranker">
   <title>Podcast Talent Ranker</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Pirata+One&family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
     body {
-      font-family: 'Montserrat', sans-serif;
-    }
-    .pirata-font {
-      font-family: 'Pirata One', cursive;
-    }
-    .wave-background {
-      background: linear-gradient(135deg, #0c4a6e 0%, #155e75 50%, #0e7490 100%);
-      position: relative;
-      overflow: hidden;
-    }
-    .wave-background::before {
-      content: '';
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      height: 100px;
-      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none"><path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" fill="%23f0f9ff" opacity="0.3"></path></svg>') no-repeat;
-      background-size: cover;
-    }
-    .anchor-icon {
-      display: inline-block;
-      animation: sway 3s ease-in-out infinite;
-    }
-    @keyframes sway {
-      0%, 100% { transform: rotate(-5deg); }
-      50% { transform: rotate(5deg); }
+      font-family: 'Inter', sans-serif;
     }
     .card-hover {
       transition: all 0.3s ease;
@@ -47,10 +21,6 @@
       transform: translateY(-4px);
       border-color: #0891b2;
       box-shadow: 0 20px 25px -5px rgba(8, 145, 178, 0.2), 0 10px 10px -5px rgba(8, 145, 178, 0.1);
-    }
-    .rope-divider {
-      height: 2px;
-      background: repeating-linear-gradient(90deg, #64748b 0, #64748b 10px, transparent 10px, transparent 20px);
     }
   </style>
 </head>
@@ -80,12 +50,9 @@
       h('path', { d: 'M16 3.13a4 4 0 0 1 0 7.75' })
     );
     
-    const AnchorIcon = () => h('svg', { width: 28, height: 28, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: 2, className: 'anchor-icon' },
-      h('circle', { cx: 12, cy: 5, r: 3 }),
-      h('line', { x1: 12, y1: 8, x2: 12, y2: 21 }),
-      h('path', { d: 'M5 13a7 7 0 0 0 14 0' }),
-      h('line', { x1: 8, y1: 13, x2: 5, y2: 13 }),
-      h('line', { x1: 19, y1: 13, x2: 16, y2: 13 })
+    const AwardIcon = () => h('svg', { width: 24, height: 24, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: 2 },
+      h('circle', { cx: 12, cy: 8, r: 7 }),
+      h('polyline', { points: '8.21 13.89 7 23 12 20 17 23 15.79 13.88' })
     );
 
     const SearchIcon = () => h('svg', { width: 20, height: 20, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: 2 },
@@ -884,22 +851,22 @@
       return h('div', { className: 'min-h-screen p-4 md:p-6' },
         h('div', { className: 'max-w-7xl mx-auto' },
           // Header
-          h('div', { className: 'wave-background rounded-xl shadow-xl p-6 md:p-8 mb-6 text-white' },
+          h('div', { className: 'bg-gradient-to-br from-cyan-600 to-blue-700 rounded-xl shadow-xl p-6 md:p-8 mb-6 text-white' },
             h('div', { className: 'flex items-center justify-between mb-4 flex-wrap gap-4' },
               h('div', { className: 'flex items-center gap-3' },
-                h(AnchorIcon),
+                h(AwardIcon),
                 h('div', null,
-                  h('h1', { className: 'text-3xl md:text-4xl font-bold pirata-font' },
+                  h('h1', { className: 'text-3xl md:text-4xl font-bold' },
                     'Talent Ranker'
                   ),
-                  h('p', { className: 'text-sky-100 mt-1 text-sm md:text-base' }, 
-                    'Navigate your podcast acquisitions'
+                  h('p', { className: 'text-cyan-50 mt-1 text-sm md:text-base' }, 
+                    'Evaluate and rank podcast acquisitions'
                   )
                 )
               ),
               h('button', {
                 onClick: () => setShowAddForm(!showAddForm),
-                className: 'bg-amber-500 text-slate-900 px-4 py-2 rounded-lg hover:bg-amber-400 transition font-semibold flex items-center gap-2 shadow-lg'
+                className: 'bg-white text-cyan-700 px-4 py-2 rounded-lg hover:bg-cyan-50 transition font-semibold flex items-center gap-2 shadow-lg border-2 border-white'
               },
                 h(PlusIcon),
                 'Add Talent'
@@ -907,12 +874,12 @@
             ),
 
             // Weights section
-            h('div', { className: 'bg-white/10 backdrop-blur-sm rounded-lg p-4 mt-6 border border-white/20' },
+            h('div', { className: 'bg-white/20 rounded-lg p-4 mt-6' },
               h('h3', { className: 'font-semibold mb-3 text-lg' }, 'Criteria Weights (%)'),
               h('div', { className: 'grid grid-cols-2 md:grid-cols-5 gap-4' },
                 Object.keys(weights).map(key =>
                   h('div', { key: key },
-                    h('label', { className: 'text-sm text-sky-100 capitalize block mb-1' },
+                    h('label', { className: 'text-sm text-cyan-50 capitalize block mb-1' },
                       key.replace(/([A-Z])/g, ' $1').trim()
                     ),
                     h('input', {
@@ -921,23 +888,23 @@
                       max: '100',
                       value: weights[key],
                       onChange: (e) => updateWeight(key, parseInt(e.target.value) || 0),
-                      className: 'w-full px-3 py-2 border border-white/30 rounded-lg bg-white/20 text-white placeholder-sky-200 focus:bg-white/30 focus:outline-none focus:ring-2 focus:ring-amber-400'
+                      className: 'w-full px-3 py-2 border border-white/30 rounded-lg bg-white/90 text-gray-900 placeholder-gray-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-cyan-300'
                     })
                   )
                 )
               ),
-              h('div', { className: 'mt-2 text-sm text-sky-100' },
+              h('div', { className: 'mt-2 text-sm text-cyan-50' },
                 'Total: ' + Object.values(weights).reduce((a, b) => a + b, 0) + '%',
                 Object.values(weights).reduce((a, b) => a + b, 0) !== 100 &&
-                  h('span', { className: 'text-amber-300 ml-2 font-semibold' }, '⚠ Should equal 100%')
+                  h('span', { className: 'text-yellow-300 ml-2 font-semibold' }, '⚠ Should equal 100%')
               )
             )
           ),
 
           // Add form
           showAddForm && h('div', { className: 'bg-white rounded-xl shadow-lg p-6 mb-6 border-2 border-cyan-600' },
-            h('h3', { className: 'font-bold text-gray-800 mb-4 text-xl flex items-center gap-2' },
-              '⚓ Add New Talent'
+            h('h3', { className: 'font-bold text-gray-800 mb-4 text-xl' },
+              'Add New Talent'
             ),
             h('div', { className: 'grid grid-cols-1 md:grid-cols-2 gap-4 mb-4' },
               h('input', {
@@ -1060,7 +1027,7 @@
             ),
 
             searchQuery && h('div', { className: 'mt-3 text-sm text-gray-600 font-medium' },
-              '🔍 Showing ' + sortedTalents.length + ' of ' + talents.length + ' talents'
+              'Showing ' + sortedTalents.length + ' of ' + talents.length + ' talents'
             )
           ),
 
@@ -1121,7 +1088,7 @@
                   }, h(TrashIcon))
                 ),
 
-                h('div', { className: 'rope-divider mb-4' }),
+                h('div', { className: 'border-t border-gray-200 my-4' }),
 
                 // Scoring bars
                 h('div', { className: 'grid grid-cols-2 md:grid-cols-5 gap-4' },
@@ -1148,11 +1115,11 @@
 
           // Empty states
           sortedTalents.length === 0 && talents.length > 0 && h('div', { className: 'bg-white rounded-xl shadow-lg p-12 text-center border-2 border-cyan-600' },
-            h('p', { className: 'text-gray-500 text-lg' }, '🔍 No talents match your search. Try different keywords.')
+            h('p', { className: 'text-gray-500 text-lg' }, 'No talents match your search. Try different keywords.')
           ),
 
           talents.length === 0 && h('div', { className: 'bg-white rounded-xl shadow-lg p-12 text-center border-2 border-cyan-600' },
-            h('p', { className: 'text-gray-500 text-lg' }, '⚓ No talent added yet. Click "Add Talent" to get started!')
+            h('p', { className: 'text-gray-500 text-lg' }, 'No talent added yet. Click "Add Talent" to get started!')
           )
         )
       );
