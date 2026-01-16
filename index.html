@@ -758,17 +758,42 @@
         ).toFixed(2);
       };
 
+      // Helper function to parse dollar values
+      const parseDollarValue = (str) => {
+        if (!str) return 0;
+        return parseFloat(str.replace(/[$,]/g, '')) || 0;
+      };
+
+      // Categorize CPM/RPM into tranches
+      const getRevenueTrancheLabel = (talent) => {
+        const cpm = parseDollarValue(talent.cpm);
+        const rpm = parseDollarValue(talent.rpm);
+        const avgRevenue = (cpm + rpm) / 2;
+        
+        // Define tranches based on average of CPM and RPM
+        if (avgRevenue >= 9) return 'high';
+        if (avgRevenue >= 6) return 'medium';
+        return 'low';
+      };
+
       const sortedTalents = useMemo(() => {
-        // Filter by search query (searches name, niche, CPM, RPM)
+        // Filter by search query (searches name, niche, CPM, RPM, and tranches)
         let filtered = talents;
         if (searchQuery.trim() !== '') {
           const query = searchQuery.toLowerCase();
-          filtered = talents.filter(t => 
-            t.name.toLowerCase().includes(query) ||
-            t.niche.toLowerCase().includes(query) ||
-            (t.cpm && t.cpm.toLowerCase().includes(query)) ||
-            (t.rpm && t.rpm.toLowerCase().includes(query))
-          );
+          filtered = talents.filter(t => {
+            // Check name and niche
+            const nameMatch = t.name.toLowerCase().includes(query);
+            const nicheMatch = t.niche.toLowerCase().includes(query);
+            const cpmMatch = t.cpm && t.cpm.toLowerCase().includes(query);
+            const rpmMatch = t.rpm && t.rpm.toLowerCase().includes(query);
+            
+            // Check tranche matches (low, medium, high)
+            const trancheLabel = getRevenueTrancheLabel(t);
+            const trancheMatch = trancheLabel.includes(query);
+            
+            return nameMatch || nicheMatch || cpmMatch || rpmMatch || trancheMatch;
+          });
           
           // Prioritize name matches - sort so name matches come first
           filtered.sort((a, b) => {
@@ -1033,7 +1058,7 @@
                 ),
                 h('input', {
                   type: 'text',
-                  placeholder: 'Search by name (also searches niche, CPM, RPM)...',
+                  placeholder: 'Search by name (also searches niche, CPM, RPM, "low", "medium", "high")...',
                   value: searchQuery,
                   onChange: (e) => setSearchQuery(e.target.value),
                   className: 'w-full pl-10 pr-10 py-3 border-2 border-slate-300 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 focus:outline-none'
@@ -1059,6 +1084,16 @@
 
             searchQuery && h('div', { className: 'mt-3 text-sm text-gray-600 font-medium' },
               'Showing ' + sortedTalents.length + ' of ' + talents.length + ' talents'
+            ),
+            
+            !searchQuery && h('div', { className: 'mt-3 text-xs text-gray-500' },
+              'Revenue tranches: ',
+              h('span', { className: 'font-semibold' }, 'High'),
+              ' (avg ≥$9) • ',
+              h('span', { className: 'font-semibold' }, 'Medium'),
+              ' ($6-$9) • ',
+              h('span', { className: 'font-semibold' }, 'Low'),
+              ' (<$6) — Search "low", "medium", or "high" to filter'
             )
           ),
 
@@ -1097,7 +1132,18 @@
                         talent.rpm && h('span', { className: 'flex items-center gap-1 text-sm bg-blue-50 px-3 py-1 rounded-lg border border-blue-200' },
                           h(DollarIcon),
                           h('span', { className: 'font-semibold text-blue-700' }, 'RPM: ' + talent.rpm)
-                        )
+                        ),
+                        (talent.cpm || talent.rpm) && (() => {
+                          const tranche = getRevenueTrancheLabel(talent);
+                          const colors = {
+                            'high': 'bg-purple-100 text-purple-700 border-purple-300',
+                            'medium': 'bg-yellow-100 text-yellow-700 border-yellow-300',
+                            'low': 'bg-slate-100 text-slate-700 border-slate-300'
+                          };
+                          return h('span', { className: 'px-3 py-1 rounded-lg border text-xs font-bold uppercase ' + colors[tranche] },
+                            tranche + ' revenue'
+                          );
+                        })()
                       ),
                       // YouTube link
                       talent.youtubeUrl && h('a', {
